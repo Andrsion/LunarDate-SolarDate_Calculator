@@ -14,15 +14,11 @@
 **但如果运行pip显示不存在，请先完成下面Step2的所有步骤。**
 
 1. 打开命令行工具。
-2. 在 Windows 上，输入以下命令：
+2. 输入以下命令：
 
-   python -m ensurepip --upgrade
+   python -m pip --upgrade
 
-3. 在 macOS 或 Linux 上，输入以下命令：
-
-   python -m ensurepip --upgrade
-
-4. 验证 Pip 是否安装成功，输入 `pip --version`。
+3. 验证 Pip 是否安装成功，输入 `pip --version`。
 
 ## Step 3. 安装 Poetry 包管理工具
 
@@ -42,7 +38,7 @@
 
    poetry install
 
-4. 如果项目中存在 `pyproject.toml` 文件，Poetry 将自动安装所有依赖项。
+4. 如果目录中存在 `pyproject.toml` 文件，Poetry 将自动安装所有依赖项。
 5. 如果需要手动添加依赖项，可以使用以下命令：
 
    poetry add package_name
