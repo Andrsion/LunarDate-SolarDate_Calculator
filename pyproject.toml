@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "lunardate-solardate-calculator"
-version = "0.1.0"
-description = "计算农历日期与公历日期重合的年份"
+version = "0.2.0"
+description = ""
 authors = ["Andrsion"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-kivy = {url = "https://pypi.tuna.tsinghua.edu.cn/packages/b0/8d/262e921d3cdfdca4c0fba6834235aa2abb6d569f781924a850d191cd23f1/Kivy-2.3.0.tar.gz#sha256=e8b8610c7f8ef6db908a139d369b247378f18105c96981e492eab2b4706c79d5"}
+colorama = "^0.4.4"
 lunardate = "^0.2.2"
 
 

@@ -1,122 +1,134 @@
-from kivy.metrics import dp
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
-from kivy.uix.popup import Popup
-from kivy.uix.scrollview import ScrollView
-from kivy.core.window import Window
 from lunardate import LunarDate
-import os
 import re
+from colorama import init, Fore, Style
+import sys
 
-class RoundedButton(Button):
-    def __init__(self, **kwargs):
-        super(RoundedButton, self).__init__(**kwargs)
+# 初始化 colorama
+init(autoreset=True)
 
-class OverlappingYearsApp(App):
-    def build(self):
-        self.font_path = 'font/NotoSans.ttf'
-        if not os.path.exists(self.font_path):
-            raise FileNotFoundError("字体文件未找到，请确保 'font/NotoSans.ttf' 存在于项目目录中。")
+def validate_input(text):
+    # 正则表达式允许1到12月份，以及1到31日，分隔符可以是任意非数字字符
+    pattern = re.compile(r'^(\d{1,2})([^0-9]+)(\d{1,2})$')
+    match = pattern.match(text)
+    if not match:
+        return False, f"输入格式错误，应为月份+任意非数字分隔符+日期，如 '4月5日'、'4-5'、'4.5'、'4&5'、'4 5' 等。 错误来源： {text}"
+    
+    month = int(match.group(1))
+    day = int(match.group(3))
 
-        self.title = "农历与公历重叠年份查找器"
-        layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
+    # 检查月份的有效性
+    if month < 1 or month > 12:
+        return False, f"月份错误，月份应在1到12之间。"
+    
+    # 检查日期的有效性
+    if day < 1 or day > 31:
+        return False, f"日期错误，日期应在1到31之间。"
 
-        self.lunar_input = TextInput(hint_text="请输入农历月份和日期（例如：4月5日）", font_name=self.font_path)
-        self.solar_input = TextInput(hint_text="请输入公历月份和日期（例如：4月5日）", font_name=self.font_path)
-        self.start_year_input = TextInput(hint_text="请输入开始计算的年份", font_name=self.font_path, multiline=False)
+    # 检查特殊月份的最大天数
+    if month in [4, 6, 9, 11] and day > 30:
+        return False, f"公历日期错误，该月份最大天数为30！"
+    
+    # 检查2月的日期
+    if month == 2 and day > 29:
+        return False, f"输入错误，2月最大天数为29！"
 
-        self.compute_button = RoundedButton(text="计算", font_name=self.font_path)
-        self.result_label = Label(text="", font_name=self.font_path, size_hint_y=None, height=dp(50))
+    # 检查农历月份的最大天数
+    try:
+        LunarDate(2023, month, day).toSolarDate()
+    except ValueError:
+        return False, f"农历日期错误，该月份不存在此日期！"
 
-        self.compute_button.bind(on_release=self.find_overlapping_years)
-        layout.add_widget(self.lunar_input)
-        layout.add_widget(self.solar_input)
-        layout.add_widget(self.start_year_input)
-        layout.add_widget(self.compute_button)
-        layout.add_widget(self.result_label)
+    return True, (month, day)
 
-        Window.size = (360, 480)
-        return layout
+def is_leap_year(year):
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
-    def validate_input(self, text):
-        # 正则表达式允许1到12月份，以及1到31日，分隔符可以是任意非数字字符
-        pattern = re.compile(r'^(1[0-2]|0?[1-9])([^\d]+)(3[01]|[12][0-9]|0?[1-9])$')
-        match = pattern.match(text)
-        if not match:
-            raise ValueError("输入格式错误，应为月份+任意非数字分隔符+日期，如 '4-5'、'4.5'、'4&5'、'4 5' 等。")
-        # 返回转换为整数的月份和日期
-        return int(match.group(1)), int(match.group(3))
+def find_overlapping_years(lunar_input, solar_input, start_year=2000):
+    lunar_month, lunar_day = lunar_input
+    solar_month, solar_day = solar_input
+    start_year = int(start_year) if start_year else 2000
 
-    def find_overlapping_years(self, instance):
+    if start_year < 1900 or start_year >= 2100:
+        raise ValueError("年份必须在1900年至2099年之间。")
+
+    overlapping_years = []
+    current_year = start_year
+    while current_year < 2100:
+        lunar_date = LunarDate(current_year, lunar_month, lunar_day)
+        converted_solar_date = lunar_date.toSolarDate()
+        if (converted_solar_date.month, converted_solar_date.day) == (solar_month, solar_day):
+            if solar_month == 2 and solar_day == 29 and not is_leap_year(current_year):
+                continue
+            overlapping_years.append(current_year)
+        current_year += 1
+
+    return overlapping_years
+
+def main():
+    # 使用Fore.LIGHTMAGENTA_EX高亮显示提示信息
+    intro_text = (
+        "欢迎使用农历与公历重叠年份查找器！\n"
+        "请按照提示输入相应的日期。\n"
+        "支持的日期格式包括：4月5日、4-5、4.5、4&5、4 5 等。\n\n"
+    )
+    exit_instructions = (
+        "在任意处按Ctrl+C或输入“q”、“quit”、“exit”（不区分大小写）退出程序。\n"
+    )
+
+    print(Fore.LIGHTMAGENTA_EX + intro_text)
+    print(Fore.LIGHTBLUE_EX + exit_instructions)  # 使用Fore.LIGHTBLUE_EX高亮显示退出指令
+
+    while True:
+        lunar_input = input("请输入农历月份和日期（例如：4月5日、4-5、4.5、4&5、4 5等）: ")
+        if lunar_input.lower() in ['q', 'quit', 'exit']:
+            print("程序已中止···")
+            break
+        
+        solar_input = input("请输入公历月份和日期（例如：4月5日、4-5、4.5、4&5、4 5等）: ")
+        if solar_input.lower() in ['q', 'quit', 'exit']:
+            print("程序已中止···")
+            break
+        
+        start_year = input("请输入开始计算的年份（直接回车使用默认值2000年）: ")
+        if start_year.lower() in ['q', 'quit', 'exit']:
+            print("程序已中止···")
+            break
+
+        errors = []
+
+        # 验证农历输入
+        valid_lunar, valid_lunar_data = validate_input(lunar_input)
+        if not valid_lunar:
+            errors.append(f"农历 {lunar_input}: {valid_lunar_data}")
+
+        # 验证公历输入
+        valid_solar, valid_solar_data = validate_input(solar_input)
+        if not valid_solar:
+            errors.append(f"公历 {solar_input}: {valid_solar_data}")
+
+        if errors:
+            print("")
+            print(Fore.LIGHTYELLOW_EX + "\n".join(errors))
+            continue
+
         try:
-            lunar_month, lunar_day = self.validate_input(self.lunar_input.text.strip())
-            solar_month, solar_day = self.validate_input(self.solar_input.text.strip())
-            start_year = int(self.start_year_input.text.strip())
-
-            if start_year < 1900 or start_year >= 2100:
-                raise ValueError("年份必须在1900年至2099年之间。")
-
-            overlapping_years = []
-            current_year = start_year
-            lunar_date = LunarDate(current_year, lunar_month, lunar_day)  # 创建一次即可
-            while current_year < 2100:
-                converted_solar_date = lunar_date.toSolarDate()
-                if (converted_solar_date.month, converted_solar_date.day) == (solar_month, solar_day):
-                    overlapping_years.append(current_year)
-                current_year += 1
-                lunar_date = LunarDate(current_year, lunar_month, lunar_day)  # 移动到循环内部
-
-            result_text = "以下年份中，农历和公历的日期重合：\n" + \
-                ', '.join(map(str, overlapping_years)) if overlapping_years else "未找到匹配的年份。"
-            self.show_popup(result_text)
-
+            overlapping_years = find_overlapping_years(valid_lunar_data, valid_solar_data, start_year or None)
+            if overlapping_years:
+                print("")
+                print("以下年份中，农历和公历的日期重合：")
+                highlighted_years = ', '.join(Fore.LIGHTCYAN_EX + str(year) + Style.RESET_ALL for year in overlapping_years)
+                print(highlighted_years)
+            else:
+                print("")
+                print("未找到匹配的年份。")
         except ValueError as e:
-            self.result_label.text = str(e)
+            print("")
+            print(Fore.LIGHTYELLOW_EX + str(e))
 
-    def show_popup(self, text):
-        # 创建一个 Label 控件来显示文本
-        popup_label = Label(
-            text=text,
-            font_name=self.font_path,
-            text_size=(None, None),  # 允许 Label 宽度和高度根据内容自动调整
-            halign='center',  # 水平居中
-            valign='top',  # 垂直顶部对齐
-        )
+        input("按Enter键继续...")
 
-        # 创建关闭按钮，并绑定点击事件
-        close_button = RoundedButton(
-            text="关闭",
-            font_name=self.font_path,
-            size_hint_y=None,  # 确保按钮有固定的高度而不是依赖于size_hint
-            height=dp(50)  # 根据dp调整按钮高度
-        )
-        close_button.bind(on_release=self.close_popup)  # 使用 on_release 事件
-
-        # 创建一个 BoxLayout 来包含 Label 和关闭按钮
-        button_layout = BoxLayout(orientation='vertical', spacing=10)
-        button_layout.add_widget(popup_label)  # 将 Label 添加到布局中
-        # 将关闭按钮添加到布局中，并确保它在底部
-        button_layout.add_widget(close_button)
-
-        # 创建弹窗，不显示标题，并将 BoxLayout 作为内容
-        self.popup = Popup(  # 确保将popup引用存储在类属性中
-            title='',
-            content=button_layout,
-            size_hint=(0.9, 0.9),
-            auto_dismiss=False
-        )
-
-        # 打开弹窗
-        self.popup.open()
-
-    def close_popup(self, instance):
-        # 关闭 Popup 逻辑
-        if self.popup:
-            self.popup.dismiss()
-
-# 程序入口点
 if __name__ == '__main__':
-    OverlappingYearsApp().run()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n程序已中止···")
