@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['date.ico'],
+    icon=['D:\\Tools\\MiniProjects\\LunarDate-SolarDate_Calculator\\date.ico'],
 )
