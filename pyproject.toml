@@ -1,0 +1,19 @@
+[project]
+name = "lunardate-solardate-calculator"
+version = "0.1.0"
+description = "A tool to find overlapping years between Lunar and Solar dates."
+authors = [
+    {name = "Andrsion",email = "cuadbuh@gmail.com"}
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "lunardate @ https://files.pythonhosted.org/packages/a3/07/232401bb1c6bc699c5e641ad375e2582cdde90b19b18e6618ec51796b737/lunardate-0.2.2-py3-none-any.whl",
+    "colorama @ https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
