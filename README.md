@@ -52,4 +52,4 @@
 1. 确保您在项目目录中，并且已经安装了所有依赖项。
 2. 使用 Poetry 运行项目：
 
-   poetry run python date.py
+   poetry run python LunarDate-SolarDate_Calculator.py
