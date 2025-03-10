@@ -26,7 +26,7 @@
 
 ### 使用 release 中的可执行程序
 
-  1. **下载程序** ：前往项目的 [release 页面](https://github.com/Andrsion/LunarDate-SolarDate_Calculator/releases/tag/Main)。
+  1. **下载程序** ：**[Release版本（点此下载）](https://github.com/Andrsion/LunarDate-SolarDate_Calculator/releases/download/Main/LunarDate-SolarDate_Calculator.exe)**。
   2. **运行程序** ：双击下载好的可执行文件，启动公农历重叠年份计算器。
   3. **输入日期** ：按照程序提示，依次输入目标公历日期和农历日期，注意农历日期中的月份和日期需符合农历的实际规则。
   4. **获取结果** ：程序将自动进行计算，并输出公历和农历日期重叠的年份结果。如果不存在重叠年份，程序也会给出相应提示。
