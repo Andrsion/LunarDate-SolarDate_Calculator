@@ -1,55 +1,49 @@
-# LunarDate-SolarDate_Calculator
- 农历日期与公历日期重叠年份计算器
+# 公农历重叠年份计算器
 
-## Step 1. 安装 Python
+## 简介
 
-1. 访问 Python 官方网站 [python.org](https://www.python.org/)。
-2. 选择适合您操作系统的 Python 版本进行下载。
-3. 运行安装程序，确保勾选了“Add Python to PATH”（将 Python 添加到 PATH）选项。
-4. 完成安装后，打开命令行工具，输入 `python --version` 来验证 Python 是否安装成功。
+公农历重叠年份计算器是一个帮助用户快速准确地计算出公历和农历日期重叠的年份的实用小工具。
 
-## Step 2. 安装 Pip 工具
+用户只需输入目标公历日期和农历日期，程序将通过调用 `lunardate` 库进行高效计算，得出两者重叠的年份结果。
 
-**通常情况下，Python 会自带 Pip！**
-**但如果运行pip显示不存在，请先完成下面Step2的所有步骤。**
+## 特点
 
-1. 打开命令行工具。
-2. 在 Windows 上，输入以下命令：
+  * **精准计算** ：基于专业的 [lunardate 库](https://github.com/lidaobing/python-lunardate) ，确保计算结果的准确性和可靠性，能够精确匹配公历和农历日期的对应关系。
+  * **操作简便** ：用户界面简洁直观，只需输入相应的日期信息，即可一键获取计算结果，无需复杂设置或操作流程。
+  * **隐私保护** ：所有计算均在本地进行，无需联网，有效保障用户数据的隐私安全，用户可以放心使用，不用担心个人信息泄露风险。
+  * **高效快捷** ：程序运行流畅，响应迅速，能够在短时间内完成复杂的日期计算和匹配工作，节省用户时间。
+  * **开箱即用** ：在 [release 页面](https://github.com/Andrsion/LunarDate-SolarDate_Calculator/releases/tag/Main) 中提供了打包好的可执行程序，无需安装 Python 环境和相关依赖库，直接下载即可使用。
 
-   python -m ensurepip --upgrade
+## 使用方法
 
-3. 在 macOS 或 Linux 上，输入以下命令：
+### 通过源代码运行
 
-   python -m ensurepip --upgrade
+  1. **克隆项目** ：使用 Git 命令克隆项目到本地，命令为 `git clone https://github.com/Andrsion/LunarDate-SolarDate_Calculator.git`。
+  2. **安装依赖** ：推荐使用 Poetry 进行依赖管理，进入项目目录后运行 `poetry install` 安装项目依赖。
+  3. **运行程序** ：使用 Poetry 运行项目，命令为 `poetry run python LunarDate-SolarDate_Calculator.py`。
+  4. **输入日期** ：按照程序提示，依次输入目标公历日期和农历日期（，注意农历日期中的月份和日期需符合农历的实际规则。
+  5. **获取结果** ：程序将自动调用 `lunardate` 库进行计算，并输出公历和农历日期重叠的年份结果。如果不存在重叠年份，程序也会给出相应提示。
 
-4. 验证 Pip 是否安装成功，输入 `pip --version`。
+### 使用 release 中的可执行程序
 
-## Step 3. 安装 Poetry 包管理工具
+  1. **下载程序** ：前往项目的 [release 页面](https://github.com/Andrsion/LunarDate-SolarDate_Calculator/releases/tag/Main)。
+  2. **运行程序** ：双击下载好的可执行文件，启动公农历重叠年份计算器。
+  3. **输入日期** ：按照程序提示，依次输入目标公历日期和农历日期，注意农历日期中的月份和日期需符合农历的实际规则。
+  4. **获取结果** ：程序将自动进行计算，并输出公历和农历日期重叠的年份结果。如果不存在重叠年份，程序也会给出相应提示。
 
-1. 确保已经安装了 Python 和 Pip。
-2. 打开命令行工具。
-3. 安装 Poetry，输入以下命令：
+## 示例
+```
+请输入农历月份和日期（例如：4月5日、4-5、4.5、4&5、4 5等）: 10.1
+请输入公历月份和日期（例如：4月5日、4-5、4.5、4&5、4 5等）: 11.1
+请输入开始计算的年份（默认2000）:
 
-   pip install poetry
+以下年份中，农历和公历的日期重合：2024, 2062, 2081
+按Enter键继续...
+```
+## 注意事项
 
-4. 验证 Poetry 是否安装成功，输入 `poetry --version`。
-
-## Step 4. 安装项目依赖
-
-1. 克隆或下载项目代码到本地。
-2. 打开命令行工具，导航到项目目录。
-3. 使用 Poetry 创建并激活虚拟环境（可选，但推荐）：
-
-   poetry install
-
-4. 如果项目中存在 `pyproject.toml` 文件，Poetry 将自动安装所有依赖项。
-5. 如果需要手动添加依赖项，可以使用以下命令：
-
-   poetry add package_name
-
-## Step 5. 运行它
-
-1. 确保您在项目目录中，并且已经安装了所有依赖项。
-2. 使用 Poetry 运行项目：
-
-   poetry run python LunarDate-SolarDate_Calculator.py
+1. **仅能处理 1900 年至 2099 年之间的日期。**
+2. **不支持闰月处理**
+3. 输入的日期格式必须正确，否则可能导致计算错误或程序异常。
+4. 日期中的月份和日期需符合实际规则，如无该日期的情况，程序将提示错误。
+5. 由于农历与公历的转换规则较为复杂，在某些特殊情况下可能存在计算结果与预期不符的情况，用户可参考相关历法资料进行核对。
